@@ -9,10 +9,10 @@ class HomeRepoImpl implements HomeRepo {
   @override
   Future<Either<Failure, void>> addNote({required NoteModel note}) async {
     try {
-      var noteBox = Hive.box(kNotesBox);
-      await noteBox.add(note);
+      var notesBox = Hive.box<NoteModel>(kNotesBox);
+      await notesBox.add(note);
       return right(null);
-    } on Exception catch (e) {
+    } catch (e) {
       if (e is HiveError) {
         return left(LocalFailure.fromHiveError(e));
       } else {
@@ -22,16 +22,9 @@ class HomeRepoImpl implements HomeRepo {
   }
 
   @override
-  Future<Either<Failure, Box<NoteModel>>> deleteNote({
-    required NoteModel note,
-  }) {
-    // TODO: implement deleteNote
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<Failure, Box<NoteModel>>> editNote({required NoteModel note}) {
-    // TODO: implement editNote
-    throw UnimplementedError();
+  List<NoteModel> fetchAllNotes() {
+    var noteBox = Hive.box<NoteModel>(kNotesBox);
+    List<NoteModel> notes = noteBox.values.toList();
+    return notes;
   }
 }

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/Features/home/presentation/manager/add_note_cubit/add_note_cubit.dart';
 import 'package:notes_app/Features/home/presentation/views/widgets/custom_button.dart';
 import 'package:notes_app/Features/home/presentation/views/widgets/custom_text_field.dart';
+import 'package:notes_app/core/models/note_model.dart';
+import 'package:notes_app/core/widgets/custom_error_message.dart';
+import 'package:intl/intl.dart';
 
 class AddNoteForm extends StatefulWidget {
   const AddNoteForm({super.key});
@@ -32,17 +37,37 @@ class _AddNoteFormState extends State<AddNoteForm> {
             hint: 'Content',
             maxlines: 5,
             onSaved: (value) {
-              title = value;
+              subTitle = value;
             },
           ),
           const SizedBox(height: 32),
-          CustomButton(
-            onTap: () {
-              if (formKey.currentState!.validate()) {
-                formKey.currentState!.save();
+          BlocBuilder<AddNoteCubit, AddNoteState>(
+            builder: (context, state) {
+              if (state is AddNoteFailure) {
+                return CustomErrorMessage(errMessage: state.errMessage);
               } else {
-                autovalidateMode = AutovalidateMode.always;
-                setState(() {});
+                return CustomButton(
+                  isLoading: state is AddNoteLoading ? true : false,
+                  onTap: () {
+                    if (formKey.currentState!.validate()) {
+                      formKey.currentState!.save();
+                      var currentDate = DateTime.now();
+                      var formatedCurrentDate = DateFormat(
+                        'dd-mm-yyyy',
+                      ).format(currentDate);
+                      NoteModel note = NoteModel(
+                        title: title!,
+                        subTitle: subTitle!,
+                        date: formatedCurrentDate,
+                        color: Colors.blue.toARGB32(),
+                      );
+                      BlocProvider.of<AddNoteCubit>(context).addNote(note);
+                    } else {
+                      autovalidateMode = AutovalidateMode.always;
+                      setState(() {});
+                    }
+                  },
+                );
               }
             },
           ),

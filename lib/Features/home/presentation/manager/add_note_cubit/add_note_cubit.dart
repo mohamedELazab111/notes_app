@@ -15,7 +15,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       (failure) {
         emit(AddNoteFailure(failure.errMessage));
       },
-      (books) {
+      (notes) {
         emit(AddNoteSuccess());
       },
     );
