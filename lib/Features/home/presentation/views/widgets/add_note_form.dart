@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/Features/home/presentation/manager/add_note_cubit/add_note_cubit.dart';
+import 'package:notes_app/Features/home/presentation/views/widgets/color_list_view.dart';
 import 'package:notes_app/Features/home/presentation/views/widgets/custom_button.dart';
 import 'package:notes_app/Features/home/presentation/views/widgets/custom_text_field.dart';
 import 'package:notes_app/core/models/note_model.dart';
@@ -41,6 +42,8 @@ class _AddNoteFormState extends State<AddNoteForm> {
             },
           ),
           const SizedBox(height: 32),
+          const ColorListView(),
+          const SizedBox(height: 32),
           BlocBuilder<AddNoteCubit, AddNoteState>(
             builder: (context, state) {
               if (state is AddNoteFailure) {
@@ -50,18 +53,7 @@ class _AddNoteFormState extends State<AddNoteForm> {
                   isLoading: state is AddNoteLoading ? true : false,
                   onTap: () {
                     if (formKey.currentState!.validate()) {
-                      formKey.currentState!.save();
-                      var currentDate = DateTime.now();
-                      var formatedCurrentDate = DateFormat(
-                        'dd-mm-yyyy',
-                      ).format(currentDate);
-                      NoteModel note = NoteModel(
-                        title: title!,
-                        subTitle: subTitle!,
-                        date: formatedCurrentDate,
-                        color: Colors.blue.toARGB32(),
-                      );
-                      BlocProvider.of<AddNoteCubit>(context).addNote(note);
+                      validateData(context);
                     } else {
                       autovalidateMode = AutovalidateMode.always;
                       setState(() {});
@@ -75,5 +67,18 @@ class _AddNoteFormState extends State<AddNoteForm> {
         ],
       ),
     );
+  }
+
+  void validateData(BuildContext context) {
+    formKey.currentState!.save();
+    var currentDate = DateTime.now();
+    var formatedCurrentDate = DateFormat('dd-MM-yyyy').format(currentDate);
+    NoteModel note = NoteModel(
+      title: title!,
+      subTitle: subTitle!,
+      date: formatedCurrentDate,
+      color: Colors.blue.toARGB32(),
+    );
+    BlocProvider.of<AddNoteCubit>(context).addNote(note);
   }
 }

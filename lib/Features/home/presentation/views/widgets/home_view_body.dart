@@ -7,14 +7,14 @@ class HomeViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SafeArea(
         child: Column(
           children: [
-            CustomAppBar(title: 'Notes', icon: Icons.search),
-            SizedBox(height: 10),
-            Expanded(child: NoteListView()),
+            CustomAppBar(title: 'Notes', icon: Icons.search, onPressed: () {}),
+            const SizedBox(height: 10),
+            const Expanded(child: NoteListView()),
           ],
         ),
       ),
